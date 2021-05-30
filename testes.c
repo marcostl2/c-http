@@ -9,6 +9,8 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#define PORT 80
+
 int main(int argc, char** argv) {
     char buffer[BUFSIZ];
     enum CONSTEXPR { MAX_REQUEST_LEN = 1024};
@@ -18,18 +20,17 @@ int main(int argc, char** argv) {
     char *hostname = "example.com";
     in_addr_t in_addr;
     int request_len;
-    int socket_file_descriptor;
+    int server_socket;
     ssize_t nbytes_total, nbytes_last;
     struct hostent *hostent;
     struct sockaddr_in sockaddr_in;
-    int server_port = 80;
 
     if (argc > 1)
         hostname = argv[1];
-    if (argc > 2)
-        server_port = strtoul(argv[2], NULL, 10);
 
     request_len = snprintf(request, MAX_REQUEST_LEN, request_template, hostname);
+    printf("\n\nChamada: %s\n\n", request);
+
     if (request_len >= MAX_REQUEST_LEN) {
         fprintf(stderr, "request length large: %d\n", request_len);
         exit(EXIT_FAILURE);
@@ -41,8 +42,8 @@ int main(int argc, char** argv) {
         perror("getprotobyname");
         exit(EXIT_FAILURE);
     }*/
-    socket_file_descriptor = socket(AF_INET, SOCK_STREAM, protoent->p_proto);
-    /*if (socket_file_descriptor == -1) {
+    server_socket = socket(AF_INET, SOCK_STREAM, protoent->p_proto);
+    /*if (server_socket == -1) {
         perror("socket");
         exit(EXIT_FAILURE);
     }*/
@@ -60,12 +61,12 @@ int main(int argc, char** argv) {
     }*/
     sockaddr_in.sin_addr.s_addr = in_addr;
     sockaddr_in.sin_family = AF_INET;
-    sockaddr_in.sin_port = htons(server_port);
+    sockaddr_in.sin_port = htons(PORT);
 
-    connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in));
+    connect(server_socket, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in));
 
     /* Actually connect. */
-    /*if (connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
+    /*if (connect(server_socket, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
         perror("connect");
         exit(EXIT_FAILURE);
     }*/
@@ -73,7 +74,7 @@ int main(int argc, char** argv) {
     /* Send HTTP request. */
     nbytes_total = 0;
     while (nbytes_total < request_len) {
-        nbytes_last = write(socket_file_descriptor, request + nbytes_total, request_len - nbytes_total);
+        nbytes_last = write(server_socket, request + nbytes_total, request_len - nbytes_total);
         /*if (nbytes_last == -1) {
             perror("write");
             exit(EXIT_FAILURE);
@@ -83,7 +84,7 @@ int main(int argc, char** argv) {
 
     /* Read the response. */
     fprintf(stderr, "debug: before first read\n");
-    while ((nbytes_total = read(socket_file_descriptor, buffer, BUFSIZ)) > 0) {
+    while ((nbytes_total = read(server_socket, buffer, BUFSIZ)) > 0) {
         fprintf(stderr, "debug: after a read\n");
         write(STDOUT_FILENO, buffer, nbytes_total);
     }
@@ -93,6 +94,6 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }*/
 
-    close(socket_file_descriptor);
+    close(server_socket);
     exit(EXIT_SUCCESS);
 }
