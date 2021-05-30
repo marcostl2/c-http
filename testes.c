@@ -1,4 +1,3 @@
-#define _XOPEN_SOURCE 700
 #include <arpa/inet.h>
 #include <assert.h>
 #include <netdb.h> /* getprotobyname */
@@ -14,7 +13,7 @@ int main(int argc, char** argv) {
     char buffer[BUFSIZ];
     enum CONSTEXPR { MAX_REQUEST_LEN = 1024};
     char request[MAX_REQUEST_LEN];
-    char request_template[] = "GET / HTTP/1.1\r\nHost: %s\r\n\r\n";
+    char request_template[] = "GET / HTTP/1.0\r\nHost: %s\r\n\r\n";
     struct protoent *protoent;
     char *hostname = "example.com";
     in_addr_t in_addr;
@@ -23,7 +22,7 @@ int main(int argc, char** argv) {
     ssize_t nbytes_total, nbytes_last;
     struct hostent *hostent;
     struct sockaddr_in sockaddr_in;
-    unsigned short server_port = 80;
+    int server_port = 80;
 
     if (argc > 1)
         hostname = argv[1];
@@ -63,11 +62,13 @@ int main(int argc, char** argv) {
     sockaddr_in.sin_family = AF_INET;
     sockaddr_in.sin_port = htons(server_port);
 
+    connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in));
+
     /* Actually connect. */
-    if (connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
+    /*if (connect(socket_file_descriptor, (struct sockaddr*)&sockaddr_in, sizeof(sockaddr_in)) == -1) {
         perror("connect");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     /* Send HTTP request. */
     nbytes_total = 0;
@@ -87,10 +88,10 @@ int main(int argc, char** argv) {
         write(STDOUT_FILENO, buffer, nbytes_total);
     }
     fprintf(stderr, "debug: after last read\n");
-    if (nbytes_total == -1) {
+    /*if (nbytes_total == -1) {
         perror("read");
         exit(EXIT_FAILURE);
-    }
+    }*/
 
     close(socket_file_descriptor);
     exit(EXIT_SUCCESS);
