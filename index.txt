@@ -1,0 +1,19 @@
+HTTP/1.1 301 Moved Permanently
+Date: Wed, 02 Jun 2021 02:00:04 GMT
+Server: Apache
+Location: http://www.columbia.edu/
+Vary: Accept-Encoding
+Content-Length: 232
+Keep-Alive: timeout=15, max=96
+Connection: close
+Content-Type: text/html; charset=iso-8859-1
+Set-Cookie: BIGipServer~CUIT~www.columbia.edu-80-pool=1764244352.20480.0000; expires=Wed, 02-Jun-2021 08:00:04 GMT; path=/; Httponly
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="http://www.columbia.edu/">here</a>.</p>
+</body></html>
+

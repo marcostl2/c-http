@@ -12,6 +12,7 @@ int main() {
   struct hostent *server;
   struct sockaddr_in serverAddr;
   int portno = 80;
+  
 
   printf("Trying to get source of pastebin.com/raw/7y7MWssc ...\n");
 
