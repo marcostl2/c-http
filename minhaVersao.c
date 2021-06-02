@@ -102,19 +102,19 @@ int main(int argc, char *argv[]) {
   int recv_length = 1;
 
   file = fopen("file.html", "w");
-  recv_length = recv(sockfd, &buffer, 3000, 0);
-  while (recv_length > 0) {
-    
-    fputs(buffer + 8, file);
-    printf("\n%d\n", recv_length);
-    // printf("The web server is %s\n", buffer + 8);
-     
-  }
-    fclose(file);
-  freeaddrinfo(res);
-     return 0;
-
   
+  while (recv_length > 0){
+    recv_length = recv(sockfd, &buffer, 3000, 0);
+    printf("%s", buffer);
+    //fputs(buffer, file);
+    freeaddrinfo(res);
+    return 0;
+  } ;
+
+      // printf("The web server is %s\n", buffer + 8);
+
+      printf("\nsem drama\n");
+  fclose(file);
 
   return 0;
 }
